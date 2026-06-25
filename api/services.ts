@@ -23,8 +23,14 @@ interface AuthResponse {
 // --- Авторизация ---
 
 export const registerUser = async (data: { email: string; password?: string }): Promise<AuthResponse> => {
-    // ✅ Убран слэш: было '/auth/register' -> стало 'auth/register'
     const res = await apiClient.post<AuthResponse>('auth/register', data);
+    
+    // ДОБАВЛЯЕМ ЭТОТ БЛОК:
+    if (res.data.token) {
+        // Сразу сохраняем токен в браузере, чтобы пользователь считался авторизованным
+        localStorage.setItem('token', res.data.token);
+    }
+    
     return res.data;
 };
 

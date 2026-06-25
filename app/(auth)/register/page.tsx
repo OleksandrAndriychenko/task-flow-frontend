@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
-import { registerUser } from '@/api/services';
+import { registerUser, loginUser } from '@/api/services';
 import Link from 'next/link';
 import { AxiosError } from 'axios';
 
@@ -15,8 +15,14 @@ export default function RegisterPage() {
 
     // Мутация для отправки данных регистрации на бэкенд
     const mutation = useMutation({
-        mutationFn: registerUser, // (или registerUser для страницы регистрации)
+        mutationFn: async (formData: { email: string; password?: string }) => {
+            // 1. Сначала регистрируем пользователя
+            await registerUser(formData);
+            // 2. Сразу после этого логиним его (loginUser сам запишет токен в localStorage)
+            return await loginUser(formData);
+        },
         onSuccess: () => {
+            // Теперь токен ГАРАНТИРОВАННО на месте, и дашборд нас не выкинет
             router.push('/dashboard');
         },
         onError: (err: AxiosError<{ message?: string }>) => {
