@@ -13,16 +13,12 @@ export default function RegisterPage() {
     const [password, setPassword] = useState('');
     const [errorMsg, setErrorMsg] = useState('');
 
-    // Мутация для отправки данных регистрации на бэкенд
     const mutation = useMutation({
         mutationFn: async (formData: { email: string; password?: string }) => {
-            // 1. Сначала регистрируем пользователя
             await registerUser(formData);
-            // 2. Сразу после этого логиним его (loginUser сам запишет токен в localStorage)
             return await loginUser(formData);
         },
         onSuccess: () => {
-            // Теперь токен ГАРАНТИРОВАННО на месте, и дашборд нас не выкинет
             router.push('/dashboard');
         },
         onError: (err: AxiosError<{ message?: string }>) => {

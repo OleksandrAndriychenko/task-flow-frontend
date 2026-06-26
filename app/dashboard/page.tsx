@@ -13,19 +13,18 @@ export default function DashboardPage() {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
 
-  // Защита роута: если токена нет, отправляем на вход
+
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (!token) router.push('/login');
     }, [router]);
 
-  // Получаем таски из кэша / API
     const { data: tasks = [], isLoading } = useQuery<Task[], AxiosError>({
         queryKey: ['tasks'],
         queryFn: fetchTasks,
     });
 
-  // Мутация: Создание задачи
+
     const createMutation = useMutation<Task, AxiosError, { title: string; description?: string }>({
         mutationFn: createTask,
         onSuccess: () => {
@@ -35,7 +34,7 @@ export default function DashboardPage() {
         },
     });
 
-  // Мутация: Обновление (перемещение по колонкам)
+
     const updateMutation = useMutation<Task, AxiosError, { id: number; fields: Partial<Task> }>({
         mutationFn: updateTask,
         onSuccess: () => {
@@ -43,7 +42,7 @@ export default function DashboardPage() {
         },
     });
 
-  // Мутация: Удаление задачи
+
     const deleteMutation = useMutation<void, AxiosError, number>({
         mutationFn: deleteTask,
         onSuccess: () => {
@@ -62,7 +61,7 @@ export default function DashboardPage() {
         router.push('/login');
     };
 
-  // Конфигурация колонок
+
     const columns: { id: Task['status']; title: string; color: string }[] = [
         { id: 'todo', title: 'Бэклог', color: 'bg-amber-500/10 border-amber-500/20 text-amber-400' },
         { id: 'in progress', title: 'В работе', color: 'bg-indigo-500/10 border-indigo-500/20 text-indigo-400' },
@@ -71,7 +70,6 @@ export default function DashboardPage() {
 
     return (
         <div className="min-h-screen bg-slate-950 text-slate-100 p-6 lg:p-12">
-        {/* Шапка */}
         <header className="max-w-7xl mx-auto flex justify-between items-center mb-12 border-b border-slate-900 pb-6">
             <div>
                 <h1 className="text-3xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-indigo-200 to-slate-200">
@@ -88,7 +86,6 @@ export default function DashboardPage() {
         </header>
 
         <main className="max-w-7xl mx-auto space-y-12">
-            {/* Форма создания */}
             <form onSubmit={handleCreate} className="bg-slate-900/40 border border-slate-900 rounded-2xl p-6 space-y-4 max-w-2xl">
             <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider">Новая задача</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -117,7 +114,7 @@ export default function DashboardPage() {
             </button>
             </form>
 
-            {/* Сетка Спринта */}
+
             {isLoading ? (
             <div className="text-center text-slate-500 py-12">Синхронизация тасок...</div>
             ) : (
@@ -126,7 +123,7 @@ export default function DashboardPage() {
                 const colTasks = tasks.filter((t) => t.status === col.id);
                 return (
                     <div key={col.id} className="bg-slate-900/20 border border-slate-900/60 rounded-2xl p-5 flex flex-col min-h-[450px]">
-                    {/* Заголовок колонки */}
+                    
                     <div className={`flex justify-between items-center p-3 rounded-xl border mb-4 font-bold text-sm ${col.color}`}>
                         <span>{col.title}</span>
                         <span className="bg-slate-950/60 text-xs px-2 py-0.5 rounded-md border border-inherit">
@@ -134,7 +131,7 @@ export default function DashboardPage() {
                         </span>
                     </div>
 
-                    {/* Карточки задач */}
+                    
                     <div className="space-y-3 flex-1 overflow-y-auto">
                         {colTasks.length === 0 && (
                         <div className="text-center text-xs text-slate-600 py-8 border border-dashed border-slate-900/60 rounded-xl">
@@ -153,7 +150,7 @@ export default function DashboardPage() {
                             {task.description && <p className="text-xs text-slate-400 mt-1">{task.description}</p>}
                             </div>
 
-                            {/* Кнопки управления */}
+                            
                             <div className="flex justify-between items-center border-t border-slate-800/80 pt-3 mt-1">
                             <div className="flex gap-2">
                                 {task.status !== 'done' && (

@@ -13,9 +13,8 @@ export default function LoginPage() {
     const [password, setPassword] = useState('');
     const [errorMsg, setErrorMsg] = useState('');
 
-    // Используем мутацию React Query для обработки запроса на вход
     const mutation = useMutation({
-        mutationFn: loginUser, // (или registerUser для страницы регистрации)
+        mutationFn: loginUser,
         onSuccess: () => {
             router.push('/dashboard');
         },
